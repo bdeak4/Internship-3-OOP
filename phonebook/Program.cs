@@ -17,6 +17,85 @@ namespace phonebook
                 { new Contact("Mate Matic", "0991234567", Contact.Type.Blocked),
                   new Call[] { } },
             };
+            int menu = 0;
+            bool exit = false;
+            while (!exit)
+            {
+                Console.Clear();
+                switch (menu)
+                {
+                    case 0:
+                        menu = Choice(new string[] {
+                            "Ispis svih kontakata",
+                            "Dodavanje novih kontakata u imenik",
+                            "Brisanje kontakata iz imenika",
+                            "Editiranje preference kontakta",
+                            "Upravljanje kontaktom",
+                            "Ispis svih poziva",
+                        }, menu);
+
+                        if (menu == 0)
+                        {
+                            exit = true;
+                            Console.WriteLine("Izlaz iz aplikacije");
+                        }
+                        break;
+                    case 1:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                    case 2:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                    case 3:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                    case 4:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                    case 5:
+                        menu = Choice(new string[] {
+                            "Ispis svih poziva sa kontaktom",
+                            "Novi poziv",
+                        }, menu);
+                        break;
+                    case 51:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                    case 52:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                    case 53:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                    case 6:
+                        menu = Choice(new string[] { }, menu);
+                        break;
+                }
+            }
+        }
+
+        static int Choice(string[] actions, int prev_choice)
+        {
+            Console.WriteLine("Akcije:");
+            for (var i = 0; i < actions.Length; i++)
+                Console.WriteLine(i + 1 + " - " + actions[i]);
+
+            if (prev_choice == 0) Console.WriteLine("0 - Izlaz iz aplikacije");
+            else Console.WriteLine("0 - Povratak u glavni izbornik");
+
+            Console.Write("Odaberite akciju: ");
+            bool success = int.TryParse(Console.ReadLine(), out int choice);
+            while (choice < 0 || choice > actions.Length || !success)
+            {
+                Console.WriteLine("Odabir mora biti jedan od brojeva u listi.");
+                Console.Write("Odaberite akciju: ");
+                success = int.TryParse(Console.ReadLine(), out choice);
+            }
+
+            if (prev_choice > 0 && choice != 0)
+                choice += prev_choice * 10;
+
+            return choice;
         }
     }
 }
