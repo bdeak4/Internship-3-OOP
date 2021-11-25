@@ -49,6 +49,7 @@ namespace phonebook
                         menu = Choice(new string[] { }, menu);
                         break;
                     case 3:
+                        Contact.Remove(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
                     case 4:

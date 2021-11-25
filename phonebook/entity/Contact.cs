@@ -54,6 +54,19 @@ namespace phonebook.entity
             Console.WriteLine("Kontakt sa uspjesno dodan.");
         }
 
+        static public void Remove(Dictionary<Contact, Call[]> contacts)
+        {
+            var contact = new Contact();
+            contact.Number = AskNumber("Unesite broj kontakta kojeg zelite obrisati: ");
+            if (!contacts.ContainsKey(contact))
+            {
+                Console.WriteLine("Kontakt sa unesenim brojem ne postoji.");
+                return;
+            }
+            contacts.Remove(contact);
+            Console.WriteLine("Kontakt uspjesno obrisan.");
+        }
+
         static string Ask(string prompt)
         {
             Console.Write(prompt);
@@ -110,6 +123,12 @@ namespace phonebook.entity
                 );
                 Console.ResetColor();
             }
+        }
+
+        public override int GetHashCode()
+        {
+            if (Number == null) return 0;
+            return Number.GetHashCode();
         }
 
         public override bool Equals(object obj)
