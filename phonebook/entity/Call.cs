@@ -28,6 +28,12 @@ namespace phonebook.entity
             _date = DateTime.Now;
         }
 
+        public Call(CallStatus status)
+        {
+            _date = DateTime.Now;
+            _status = status;
+        }
+
         public Call(DateTime date, CallStatus status)
         {
             _date = date;
@@ -48,32 +54,88 @@ namespace phonebook.entity
                 {
                     return;
                 }
-                foreach (var contact in contacts)
+                foreach (var _contact in contacts)
                 {
-                    foreach (var call in contact.Value)
+                    foreach (var call_ in _contact.Value)
                     {
-                        if (call.Status == CallStatus.InProgress)
+                        if (call_.Status == CallStatus.InProgress)
                         {
-                            call.Status = CallStatus.Ended;
+                            call_.Status = CallStatus.Ended;
                         }
                     }
                 }
             }
 
             var number = Contact.Choice(new List<Contact>(contacts.Keys));
+            var contact = new Contact { Number = number };
 
-            if (!contacts.ContainsKey(new Contact { Number = number }))
+            if (!contacts.ContainsKey(contact))
             {
                 Console.WriteLine("Kontakt sa unesenim brojem ne postoji.");
                 return;
             }
 
-            // ...
-        }
+            if (contacts.Keys.Where(c => c.Number == number).Select(c => c.Type).First() == ContactType.Blocked)
+            {
+                Console.WriteLine("Nije moguce obaviti poziv. Kontakt je blokiran.");
+                return;
+            }
 
-        // < 5 - pozdrav gospodine zovem iz hrvatskog telekoma vezano za anketu...; *beep*
-        // < 10 - e [baba, dida, caca, majko], reci; $x dodi za stol rucak se hladi; evo me za 5 minuta; dodi; odmah; *beep*
-        // pitanje za miljunas
+            var r = new Random();
+            var status = (CallStatus)r.Next(3);
+
+            var call = new Call(status);
+
+            switch(status)
+            {
+                case CallStatus.InProgress:
+                    var duration = r.Next(1, 21);
+                    Console.WriteLine($"Kristalna kugla kaze da ce ovaj poziv trajati {duration}s");
+
+                    if (duration >= 10)
+                    {
+                        var name = contacts.Keys.Where(c => c.Number == number).Select(c => c.Name).First();
+                        if (name != "")
+                        {
+                            name = name.Split(" ")[0];
+                        }
+                        else
+                        {
+                            name = "mali";
+                        }
+
+                        RunLines(new string[] {
+                            "e majko, reci",
+                            $"{name} odma dodi za stol rucak se hladi",
+                            "evo me za 5 minuta",
+                            "rekla san odma",
+                            "ok",
+                            "*beep*",
+                        }, duration);
+                    }
+                    else
+                    {
+                        var company = new string[] { "hrvatskog telekoma", "tele2", "a1" };
+                        RunLines(new string[] {
+                            $"Pozdrav gospodine zovem iz {company[r.Next(3)]} vezano za anketu...",
+                            "*beep*",
+                        }, duration);
+                    }
+
+                    call.Status = CallStatus.Ended;
+                    Console.WriteLine("Poziv je zavrsio.");
+                    break;
+
+                case CallStatus.Missed:
+                    Console.WriteLine("Kontakt je propustio poziv.");
+                    break;
+
+                case CallStatus.Ended:
+                    Console.WriteLine("Poziv je zavrsio.");
+                    break;
+            }
+            contacts[contact] = contacts[contact].Concat(new Call[] { call }).ToArray();
+        }
 
         static public void PrintByContact(Dictionary<Contact, Call[]> contacts)
         {
@@ -115,6 +177,15 @@ namespace phonebook.entity
             }
         }
 
-
+        static void RunLines(string[] lines, int duration)
+        {
+            Console.WriteLine("transkript razgovora:");
+            float p = (float)duration / lines.Length;
+            foreach (var line in lines)
+            {
+                Task.Delay((int)(p * 1000)).Wait();
+                Console.WriteLine(line);
+            }
+        }
     }
 }

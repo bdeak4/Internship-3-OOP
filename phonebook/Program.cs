@@ -96,6 +96,7 @@ namespace phonebook
                         break;
 
                     case Menu.AddCall:
+                        Call.Add(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
 
