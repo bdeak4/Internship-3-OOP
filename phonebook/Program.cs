@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using phonebook.entity;
+using System.Linq;
 
 namespace phonebook
 {
@@ -24,13 +25,15 @@ namespace phonebook
             var contacts = new Dictionary<Contact, Call[]>
             {
                 { new Contact("Ante Antic", "0981234567", ContactType.Favorite),
-                  new Call[] { new Call(new DateTime(2021, 2, 2), Call.Status.Ended), new Call() } },
+                  new Call[] { new Call(new DateTime(2021, 2, 2), CallStatus.Ended),
+                               new Call() } },
 
                 { new Contact("Ana Anic", "0961234567", ContactType.Favorite),
-                  new Call[] { new Call(new DateTime(2021, 3, 2), Call.Status.Ended) } },
+                  new Call[] { new Call(new DateTime(2021, 3, 1), CallStatus.Missed),
+                               new Call(new DateTime(2021, 3, 2), CallStatus.Ended) } },
 
                 { new Contact("Marija Maric", "0951234567"),
-                  new Call[] { new Call(new DateTime(2021, 11, 11), Call.Status.Ended) } },
+                  new Call[] { new Call(new DateTime(2021, 11, 11), CallStatus.Ended) } },
 
                 { new Contact("Mate Matic", "0991234567", ContactType.Blocked),
                   new Call[] { } },
@@ -88,14 +91,17 @@ namespace phonebook
                         break;
 
                     case Menu.PrintCallsByContact:
+                        Call.PrintByContact(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
 
                     case Menu.AddCall:
+                        Call.Add(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
 
                     case Menu.PrintCalls:
+                        Call.Print(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
                 }
