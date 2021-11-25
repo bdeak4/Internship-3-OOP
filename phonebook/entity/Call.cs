@@ -77,7 +77,18 @@ namespace phonebook.entity
 
         static public void PrintByContact(Dictionary<Contact, Call[]> contacts)
         {
+            var number = Contact.Choice(new List<Contact>(contacts.Keys));
 
+            if (!contacts.ContainsKey(new Contact { Number = number }))
+            {
+                Console.WriteLine("Kontakt sa unesenim brojem ne postoji.");
+                return;
+            }
+
+            Print(contacts
+                .Where(c => c.Key.Number == number)
+                .ToDictionary(x => x.Key, x => x.Value)
+            );
         }
 
         static public void Print(Dictionary<Contact, Call[]> contacts)
@@ -87,7 +98,7 @@ namespace phonebook.entity
 
             foreach (var contact in contacts)
             {
-                foreach (var call in contact.Value)
+                foreach (var call in contact.Value.OrderByDescending(c => c.Date))
                 {
                     if (call.Status is CallStatus.Missed)
                     {
