@@ -45,6 +45,7 @@ namespace phonebook
                         menu = Choice(new string[] { }, menu);
                         break;
                     case 2:
+                        Contact.Add(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
                     case 3:
