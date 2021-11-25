@@ -43,11 +43,13 @@ namespace phonebook.entity
             var contact = new Contact();
             contact.Name = Ask("Unesite ime i prezime novog kontakta: ");
             contact.Number = Ask("Unesite broj novog korisnika: ");
+
             if (contacts.ContainsKey(contact))
             {
                 Console.WriteLine("Kontakt sa istim brojem vec postoji.");
                 return;
             }
+
             contacts.Add(contact, new Call[] { });
             Console.WriteLine("Kontakt uspjesno dodan.");
         }
@@ -56,11 +58,13 @@ namespace phonebook.entity
         {
             var contact = new Contact();
             contact.Number = Choice(new List<Contact>(contacts.Keys));
+
             if (!contacts.ContainsKey(contact))
             {
                 Console.WriteLine("Kontakt sa unesenim brojem ne postoji.");
                 return;
             }
+
             contacts.Remove(contact);
             Console.WriteLine("Kontakt uspjesno obrisan.");
         }
@@ -68,11 +72,13 @@ namespace phonebook.entity
         static public void ChangeType(Dictionary<Contact, Call[]> contacts)
         {
             var number = Choice(new List<Contact>(contacts.Keys));
+
             if (!contacts.ContainsKey(new Contact() { Number = number }))
             {
                 Console.WriteLine("Kontakt sa unesenim brojem ne postoji.");
                 return;
             }
+
             contacts = contacts.ToDictionary(
                 d => {
                     if (d.Key.Number == number) d.Key.Type = ChooseType();
@@ -80,6 +86,7 @@ namespace phonebook.entity
                 },
                 d => d.Value
             );
+
             Console.WriteLine("Preferenca kontakta uspjesno izmjenjena.");
         }
 
@@ -87,12 +94,14 @@ namespace phonebook.entity
         {
             Console.Write(prompt);
             string str = Console.ReadLine();
+
             while (str.Length == 0)
             {
                 Console.WriteLine("Unos ne smije biti prazan.");
                 Console.Write(prompt);
                 str = Console.ReadLine();
             }
+
             return str;
         }
 
@@ -100,11 +109,18 @@ namespace phonebook.entity
         {
             Console.WriteLine("Opcije:");
             for (var i = 0; i < contacts.Count; i++)
-                Console.WriteLine(i + 1 + " - " + contacts[i].Number + " - " + contacts[i].Name);
+            {
+                Console.WriteLine($"{i + 1} - {contacts[i].Number} - {contacts[i].Name}");
+            }
+
             string number = Ask("Unesite redni broj ili custom vrijednost: ");
             bool success = int.TryParse(number, out int choice);
-            if (choice > 0 && choice < contacts.Count && success)
-                return contacts[choice-1].Number;
+
+            if (choice > 0 && choice <= contacts.Count && success)
+            {
+                return contacts[choice - 1].Number;
+            }
+
             return number;
         }
 
@@ -112,37 +128,42 @@ namespace phonebook.entity
         {
             Console.WriteLine("Preference:");
             var types = Enum.GetNames(typeof(ContactType));
+
             for (var i = 0; i < types.Length; i++)
-                Console.WriteLine(i + 1 + " - " + types[i]);
+            {
+                Console.WriteLine($"{i + 1} - {types[i]}");
+            }
+
             string prompt = "Unesite redni broj preference: ";
             bool success = int.TryParse(Ask(prompt), out int choice);
+
             while (choice < 0 || choice >= types.Length || !success)
             {
                 Console.WriteLine("Unos ne smije biti prazan.");
                 Console.Write(prompt);
                 success = int.TryParse(Ask(prompt), out choice);
             }
-            return (ContactType)(choice-1);
+
+            return (ContactType)(choice - 1);
         }
 
         static public void Print(List<Contact> contacts)
         {
-            Console.WriteLine(
-                "Ime i prezime".PadRight(30) + " | " +
-                "Broj".PadRight(30) + " | Preferenca"
-            );
+            Console.WriteLine($"{"Ime i prezime".PadRight(30)} | {"Broj".PadRight(30)} | Preferenca");
             Console.WriteLine("------------------------------ | ------------------------------ | ------------------------------");
+            
             foreach (var contact in contacts)
             {
                 if (contact.Type is ContactType.Blocked)
+                {
                     Console.ForegroundColor = ConsoleColor.Red;
+                }
                 if (contact.Type is ContactType.Favorite)
+                {
                     Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(
-                    contact.Name.PadRight(30) + " | " +
-                    contact.Number.PadRight(30) + " | " + 
-                    contact.Type
-                );
+                }
+
+                Console.WriteLine($"{contact.Name.PadRight(30)} | {contact.Number.PadRight(30)} | {contact.Type}");
                 Console.ResetColor();
             }
         }
