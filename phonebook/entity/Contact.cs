@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace phonebook.entity
 {
@@ -44,20 +42,20 @@ namespace phonebook.entity
         {
             var contact = new Contact();
             contact.Name = Ask("Unesite ime i prezime novog kontakta: ");
-            contact.Number = AskNumber("Unesite broj novog kontakta: ");
+            contact.Number = Ask("Unesite broj novog korisnika: ");
             if (contacts.ContainsKey(contact))
             {
                 Console.WriteLine("Kontakt sa istim brojem vec postoji.");
                 return;
             }
             contacts.Add(contact, new Call[] { });
-            Console.WriteLine("Kontakt sa uspjesno dodan.");
+            Console.WriteLine("Kontakt uspjesno dodan.");
         }
 
         static public void Remove(Dictionary<Contact, Call[]> contacts)
         {
             var contact = new Contact();
-            contact.Number = AskNumber("Unesite broj kontakta kojeg zelite obrisati: ");
+            contact.Number = Choice(new List<Contact>(contacts.Keys));
             if (!contacts.ContainsKey(contact))
             {
                 Console.WriteLine("Kontakt sa unesenim brojem ne postoji.");
@@ -80,27 +78,16 @@ namespace phonebook.entity
             return str;
         }
 
-        static string AskNumber(string prompt)
+        static string Choice(List<Contact> contacts)
         {
-            Console.Write(prompt);
-            string oib = Console.ReadLine();
-            while (!IsDigitsOnly(oib) || oib.Length == 0)
-            {
-                Console.WriteLine("Broj mora sadrzavati samo brojeve.");
-                Console.Write(prompt);
-                oib = Console.ReadLine();
-            }
-            return oib;
-        }
-
-        static bool IsDigitsOnly(string str)
-        {
-            foreach (char c in str)
-            {
-                if (c < '0' || c > '9')
-                    return false;
-            }
-            return true;
+            Console.WriteLine("Opcije:");
+            for (var i = 0; i < contacts.Count; i++)
+                Console.WriteLine(i + 1 + " - " + contacts[i].Number + " - " + contacts[i].Name);
+            string number = Ask("Unesite redni broj ili custom vrijednost: ");
+            bool success = int.TryParse(number, out int choice);
+            if (choice > 0 && choice < contacts.Count && success)
+                return contacts[choice-1].Number;
+            return number;
         }
 
         static public void Print(List<Contact> contacts)
