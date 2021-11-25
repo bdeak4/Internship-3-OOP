@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace phonebook.entity
 {
@@ -65,6 +65,24 @@ namespace phonebook.entity
             Console.WriteLine("Kontakt uspjesno obrisan.");
         }
 
+        static public void ChangeType(Dictionary<Contact, Call[]> contacts)
+        {
+            var number = Choice(new List<Contact>(contacts.Keys));
+            if (!contacts.ContainsKey(new Contact() { Number = number }))
+            {
+                Console.WriteLine("Kontakt sa unesenim brojem ne postoji.");
+                return;
+            }
+            contacts = contacts.ToDictionary(
+                d => {
+                    if (d.Key.Number == number) d.Key.Type = ChooseType();
+                    return d.Key;
+                },
+                d => d.Value
+            );
+            Console.WriteLine("Preferenca kontakta uspjesno izmjenjena.");
+        }
+
         static string Ask(string prompt)
         {
             Console.Write(prompt);
@@ -88,6 +106,23 @@ namespace phonebook.entity
             if (choice > 0 && choice < contacts.Count && success)
                 return contacts[choice-1].Number;
             return number;
+        }
+
+        static ContactType ChooseType()
+        {
+            Console.WriteLine("Preference:");
+            var types = Enum.GetNames(typeof(ContactType));
+            for (var i = 0; i < types.Length; i++)
+                Console.WriteLine(i + 1 + " - " + types[i]);
+            string prompt = "Unesite redni broj preference: ";
+            bool success = int.TryParse(Ask(prompt), out int choice);
+            while (choice < 0 || choice >= types.Length || !success)
+            {
+                Console.WriteLine("Unos ne smije biti prazan.");
+                Console.Write(prompt);
+                success = int.TryParse(Ask(prompt), out choice);
+            }
+            return (ContactType)(choice-1);
         }
 
         static public void Print(List<Contact> contacts)
