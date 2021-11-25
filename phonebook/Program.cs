@@ -25,15 +25,15 @@ namespace phonebook
             var contacts = new Dictionary<Contact, Call[]>
             {
                 { new Contact("Ante Antic", "0981234567", ContactType.Favorite),
-                  new Call[] { new Call("0951234567", new DateTime(2021, 2, 2), CallStatus.Ended),
-                               new Call("0961234567") } },
+                  new Call[] { new Call(new DateTime(2021, 2, 2), CallStatus.Ended),
+                               new Call() } },
 
                 { new Contact("Ana Anic", "0961234567", ContactType.Favorite),
-                  new Call[] { new Call("0981234567", new DateTime(2021, 3, 1), CallStatus.Missed),
-                               new Call("0981234567", new DateTime(2021, 3, 2), CallStatus.Ended) } },
+                  new Call[] { new Call(new DateTime(2021, 3, 1), CallStatus.Missed),
+                               new Call(new DateTime(2021, 3, 2), CallStatus.Ended) } },
 
                 { new Contact("Marija Maric", "0951234567"),
-                  new Call[] { new Call("0981234568", new DateTime(2021, 11, 11), CallStatus.Ended) } },
+                  new Call[] { new Call(new DateTime(2021, 11, 11), CallStatus.Ended) } },
 
                 { new Contact("Mate Matic", "0991234567", ContactType.Blocked),
                   new Call[] { } },
@@ -91,6 +91,7 @@ namespace phonebook
                         break;
 
                     case Menu.PrintCallsByContact:
+                        Call.PrintByContact(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
 
@@ -99,7 +100,7 @@ namespace phonebook
                         break;
 
                     case Menu.PrintCalls:
-                        Call.Print(new List<Call>(contacts.Values.SelectMany(d => d)));
+                        Call.Print(contacts);
                         menu = Choice(new string[] { }, menu);
                         break;
                 }

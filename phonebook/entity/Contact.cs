@@ -105,7 +105,7 @@ namespace phonebook.entity
             return str;
         }
 
-        static string Choice(List<Contact> contacts)
+        public static string Choice(List<Contact> contacts)
         {
             Console.WriteLine("Opcije:");
             for (var i = 0; i < contacts.Count; i++)
